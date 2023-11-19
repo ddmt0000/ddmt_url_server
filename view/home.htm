@@ -1,0 +1,103 @@
+<mdui-card variant="filled" style="width: 100%;height: about;">
+    <div style="padding: 10px;">
+        <h4>DDMT URL Server 😊</h4>
+        <p>DDMT URL Server is a short-link service developed by DDMT. 😎 It allows users to create short links for long
+            URLs, making it easy to share links on social media, email, SMS, and other platforms. 🌟 The service is free
+            to use and does not require any sign-up or registration. 👍</p>
+    </div>
+</mdui-card>
+<mdui-divider></mdui-divider>
+<p></p>
+<div class="mdui-prose">
+    <h2>Hello!👏</h2>
+    <p>Services that are currently running:</p>
+    <mdui-text-field readonly label="Number of URLs" value="<?php echo url_all($conn);?>"></mdui-text-field>
+    <mdui-list id="url_list">
+        <mdui-list-subheader>URL added by me</mdui-list-subheader>
+        <?php echo home_list();?>
+    </mdui-list>
+    <mdui-card style="width: 100%;height: 60px">
+        <p style="padding: 15px 20px 0px 20px;">The list only displays the latest 20 records.</p>
+    </mdui-card>
+    <mdui-dialog id="dialog_list" stacked-actions close-on-overlay-click headline="你想干什么？😕"
+        class="example-stacked-actions">
+        <mdui-button slot="action" id="dialog_list_open" variant="text"><mdui-icon name="link"
+                slot="icon"></mdui-icon>打开</mdui-button>
+        <mdui-button slot="action" id="dialog_list_copy" variant="text"><mdui-icon name="content_copy"
+                slot="icon"></mdui-icon>复制</mdui-button>
+        <mdui-button slot="action" id="dialog_list_del" variant="text"><mdui-icon name="delete"
+                slot="icon"></mdui-icon>删除</mdui-button>
+        <mdui-button slot="action" id="dialog_list_cancel" variant="tonal">我没想干什么🖐️</mdui-button>
+    </mdui-dialog>
+    <mdui-snackbar class="example-snackbar">Photo archived</mdui-snackbar>
+</div>
+<script>
+    const cut = navigator.clipboard;
+    const snackbar = document.querySelector(".example-snackbar");
+    const dialog_list = document.getElementById("dialog_list");
+    const url_list = document.getElementById("url_list");
+    var dialog_list_url; function cut_writetext(text) {
+        if (cut == null) {
+            snackbar_tip("该浏览器不支持写入剪辑版，推荐使用Chrome");
+        } else {
+            if (cut.writeText(text)) {
+                snackbar_tip("已复制到剪辑版");
+            } else {
+                snackbar_tip("无法完整复制");
+            }
+            snackbar.open = true;
+        }
+    } function snackbar_tip(text) {
+        snackbar.innerText = text;
+        snackbar.open = true;
+    } url_list.addEventListener("click", (event) => {
+        console.log(event.target.localName);
+        if (event.target.localName === "mdui-list-item") {
+            console.log("列表点击" + event.target.innerText)
+            dialog_list_url = event;
+            dialog_list.open = true;
+        } else if (event.target.localName === "mdui-icon") {
+            console.log(event.target.name);
+            if (event.target.name === "content_copy") {
+                cut_writetext(url_list.children[Number(event.target.id.substring(9)) + 1].innerText);
+            }
+        }
+    })    
+    dialog_list.addEventListener("click", (event) => {
+        if (event.target.id === "dialog_list_copy") {
+            cut_writetext(dialog_list_url.target.innerText);
+        } else if (event.target.id === "dialog_list_open") {
+            console.log("打开" + dialog_list_url.target.innerText);
+            window.open(dialog_list_url.target.innerText, "_blank");
+        } else if (event.target.id === "dialog_list_del") {
+            console.log("删除" + dialog_list_url.target.innerText);
+            // console.log(dialog_list_url.srcElement);
+            // console.log(url_list.children[0]);            //请求函数
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/?mod=del&url_orange=" + encodeURIComponent(dialog_list_url.target.innerText), true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // 请求成功
+                    var response = JSON.parse(xhr.responseText);
+                    var code = response.code;
+                    var msg = response.msg; console.log("code: " + code);
+                    console.log("msg: " + msg);
+                    if (code == 1) {
+                        //成功
+                        url_list.removeChild(dialog_list_url.srcElement);//成功就删掉了
+                    } else {
+                        //错误
+                    }
+                    snackbar_tip(msg);
+                } else {
+                    if (xhr.readyState >= 4 && xhr.status != 200) {
+                        //请求失败
+                        snackbar_tip("请求失败");
+                    }
+                }
+            };
+            xhr.send();
+        }
+        dialog_list.open = false;
+    })
+</script>
