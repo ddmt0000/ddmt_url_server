@@ -9,7 +9,7 @@ $db_servername = $config['db']['mysql']['localhost'];
 $db_username = $config['db']['mysql']['user'];
 $db_password = $config['db']['mysql']['password'];
 $db_name = $config['db']['mysql']['name'];
-$site_name = $config['db']['sitename'];
+$site_name = $config['sitename'];
 $conn = new mysqli($db_servername, $db_username, $db_password, $db_name);
 
 //数据库连接部分

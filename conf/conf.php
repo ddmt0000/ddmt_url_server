@@ -13,5 +13,5 @@ return array(
         ),
     ),
     'sitename' => 'DDMT url server',
-    'lang' => 'zh-cn'
+    'lang' => 'zh-cn',
 );
