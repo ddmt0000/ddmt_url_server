@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-CN" class="">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" />
+  <meta name="renderer" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <link rel="stylesheet" href="https://unpkg.com/mdui@2.0.2/mdui.css">
+  <script src="https://unpkg.com/mdui@2.0.2/mdui.global.js"></script>
+  <!-- Filled -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title><?php echo $site_name;?></title>
+  <style>
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <mdui-layout>
+    <mdui-top-app-bar style="position: relative;">
+      <mdui-button-icon icon="menu"></mdui-button-icon>
+      <mdui-top-app-bar-title>
+        <?php echo page_active('');?>
+      </mdui-top-app-bar-title>
+      <div style="flex-grow: 1"></div>
+      <!-- <mdui-icon name='brightness_medium'></mdui-icon> -->
+      <mdui-dropdown>
+        <mdui-button slot="trigger">
+          <mdui-icon name="more_vert"></mdui-icon>
+        </mdui-button>
+        <mdui-menu>
+          <mdui-menu-item><mdui-button-icon slot="icon"
+              icon="brightness_1"></mdui-button-icon>夜间模式</mdui-menu-item>
+          <mdui-menu-item><mdui-button-icon slot="icon"
+            icon="brightness_medium"></mdui-button-icon>跟随系统</mdui-menu-item>
+        </mdui-menu>
+      </mdui-dropdown>
+    </mdui-top-app-bar> <mdui-navigation-drawer close-on-overlay-click class="example-drawer" style="max-width: 200px;">
+      <mdui-list>
+        <mdui-list-item rounded href="/?home.htm" <?php echo page_active('home.htm');?>><mdui-button-icon slot="icon"
+            icon="home"></mdui-button-icon>home</mdui-list-item>
+        <mdui-list-item rounded href="/?add.htm" <?php echo page_active('add.htm');?>><mdui-button-icon slot="icon"
+            icon="add"></mdui-button-icon>add</mdui-list-item>
+        <mdui-list-item rounded href="/?about.htm" <?php echo page_active('about.htm');?>><mdui-button-icon slot="icon"
+            icon="info"></mdui-button-icon>about</mdui-list-item>
+        <mdui-list-item rounded href="/?admin.htm" <?php echo page_active('admin.htm');?>><mdui-button-icon slot="icon"
+            icon="admin_panel_settings"></mdui-button-icon>admin</mdui-list-item>
+      </mdui-list>
+    </mdui-navigation-drawer>
+    <mdui-bottom-app-bar scroll-target=".example-scroll-target">Powered by ddmturlsrever 1.0.1 on
+      ddmt.top</mdui-bottom-app-bar>
+    <mdui-layout-main class="example-layout-main" style="min-height: 95vh; padding: 64px 0px 0px;">
+      <main class="container mdui-prose" style="max-width: 70rem;margin: 0 auto;">
+        <?php echo page_mian();?>
+      </main>
+    </mdui-layout-main>
+  </mdui-layout>
+  <script>
+    const navigationDrawer = document.querySelector(".example-drawer");
+    const openButton = document.querySelector("mdui-button-icon[icon='menu']");
+    openButton.addEventListener("click", function () {
+      console.log(navigationDrawer.open);
+      if (navigationDrawer.open) {
+        navigationDrawer.open = false;
+      } else {
+        navigationDrawer.open = true;
+      }
+    });
+  </script>
+</body>
+
+</html>

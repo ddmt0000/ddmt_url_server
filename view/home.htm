@@ -11,7 +11,7 @@
 <div class="mdui-prose">
     <h2>Hello!👏</h2>
     <p>Services that are currently running:</p>
-    <mdui-text-field readonly label="Number of URLs" value="<?php echo url_all($conn);?>"></mdui-text-field>
+    <mdui-text-field id="url_num" readonly label="Number of URLs" value="<?php echo url_all($conn);?>"></mdui-text-field>
     <mdui-list id="url_list">
         <mdui-list-subheader>URL added by me</mdui-list-subheader>
         <?php echo home_list();?>
@@ -36,7 +36,9 @@
     const snackbar = document.querySelector(".example-snackbar");
     const dialog_list = document.getElementById("dialog_list");
     const url_list = document.getElementById("url_list");
-    var dialog_list_url; function cut_writetext(text) {
+    const url_num = document.getElementById("url_num");
+    var dialog_list_url; 
+    function cut_writetext(text) {
         if (cut == null) {
             snackbar_tip("该浏览器不支持写入剪辑版，推荐使用Chrome");
         } else {
@@ -47,10 +49,12 @@
             }
             snackbar.open = true;
         }
-    } function snackbar_tip(text) {
+    } 
+    function snackbar_tip(text) {
         snackbar.innerText = text;
         snackbar.open = true;
-    } url_list.addEventListener("click", (event) => {
+    } 
+    url_list.addEventListener("click", (event) => {
         console.log(event.target.localName);
         if (event.target.localName === "mdui-list-item") {
             console.log("列表点击" + event.target.innerText)
@@ -85,6 +89,7 @@
                     if (code == 1) {
                         //成功
                         url_list.removeChild(dialog_list_url.srcElement);//成功就删掉了
+                        url_num.value=Number(url_num.value)-1;//更新宗苏
                     } else {
                         //错误
                     }

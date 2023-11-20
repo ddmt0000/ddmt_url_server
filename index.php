@@ -19,10 +19,10 @@ function page_active($pagename)
 }
 function page_mian()
 {
-    if (file_exists("view/" . $_SERVER['QUERY_STRING'])) {
+    if (file_exists("view/" . $_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != "") {
         include_once("view/" . $_SERVER['QUERY_STRING']);
     } else {
-        include_once("home.htm");
+        include_once("view/home.htm");
     }
 }
 function home_list()
@@ -66,7 +66,7 @@ if ($get_mod == "add") {
 } elseif (find_RandomString($_SERVER['QUERY_STRING']) == 1) { //查询模式
     $url_orange = url_find_orange($_SERVER['QUERY_STRING']);
     if ($url_orange == null) {
-        include_once('home.htm');
+        include_once('index.htm');
     } else {
         include_once('Jump.htm');
     }
@@ -82,7 +82,12 @@ if ($get_mod == "add") {
             $rejson = array('code' => 0, 'msg' => "不存在该url");
             exit(json_encode($rejson));
         } else {
-            $rejson = array('code' => 0, 'msg' => "管理员没有允许这个权限");
+            $or_url_del = url_delete_orange($_GET['url_orange']);
+            if ($or_url_del){
+                $rejson = array('code' => 1, 'msg' => "删除已成功");
+            }else{
+                $rejson = array('code' => 0, 'msg' => "删除是失败的");
+            }
             exit(json_encode($rejson));
         }
     } else {
@@ -90,6 +95,6 @@ if ($get_mod == "add") {
         exit(json_encode($rejson));
     }
 } else {
-    include_once('home.htm');
+    include_once('index.htm');
 }
 mysqli_close($conn);

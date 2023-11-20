@@ -76,6 +76,19 @@ function url_examine_orange($url_orange){
         return null;
     }
 }
+//通过url_orange删除对应表项
+function url_delete_orange($url_orange){
+    global $conn;
+    $url_orange = urlencode($url_orange);
+    $sql = "DELETE FROM url_li WHERE url_orange = '$url_orange'";
+    $result = $conn->query($sql);
+    if ($conn->affected_rows > 0) {
+        return true; // 删除成功
+    } else {
+        return false; // 删除失败
+    }
+}
+
 
 //统计总数
 function url_all(){

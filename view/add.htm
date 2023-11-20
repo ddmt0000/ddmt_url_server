@@ -1,18 +1,62 @@
 <h1>DDMT add</h1>
 <p>输入原始链接：</p>
-<mdui-text-field class="example-text" prefix="" label="url"><mdui-icon name="content_paste"
-        slot="end-icon"></mdui-icon></mdui-text-field>
-<p></p>
-<mdui-text-field readonly id="newurl" value="newurl" style="display:none;"><mdui-icon name="content_copy"
-        slot="end-icon"></mdui-icon></mdui-text-field>
+<mdui-text-field class="example-text" prefix="" label="url"><mdui-button-icon id="content_paste" icon="content_paste"
+        slot="end-icon"></mdui-button-icon></mdui-text-field>
+        <mdui-checkbox id="checkbox_row">多行批量添加</mdui-checkbox>
+<mdui-text-field readonly id="newurl" value="newurl" style="display:none;"><mdui-button-icon id="content_copy" icon="content_copy"
+        slot="end-icon"></mdui-button-icon></mdui-text-field>
+        
 <p></p>
 <mdui-button full-width onclick="add_url();"><mdui-icon name='add_link'></mdui-icon>add</mdui-button>
 <mdui-snackbar class="example-snackbar">Photo archived</mdui-snackbar>
 <script>
     const snackbar = document.querySelector(".example-snackbar");
     const urlprint = document.querySelector("mdui-text-field[id='newurl']");
+    const checkbox_row = document.getElementById("checkbox_row");
+    const urlInput = document.querySelector("mdui-text-field");
+    const content_paste = document.getElementById("content_paste");
+    const content_copy = document.getElementById("content_copy");
+    const cut = navigator.clipboard;
+
+    function snackbar_tip(text) {
+        snackbar.innerText = text;
+        snackbar.open = true;
+    } 
+
+    function cut_writetext(text) {
+        if (cut == null) {
+            snackbar_tip("该浏览器不支持写入剪辑版，推荐使用Chrome");
+        } else {
+            if (cut.writeText(text)) {
+                snackbar_tip("已复制到剪辑版");
+            } else {
+                snackbar_tip("无法完整复制");
+            }
+        }
+    } 
+
+    content_copy.addEventListener("click",()=>{
+        cut_writetext(urlprint.PromiseResult);
+    });
+    content_paste.addEventListener("click",()=>{
+        cut.readText().then(function(result) {
+            urlInput.value = result;
+        }).catch(function(error) {
+            snackbar_tip(error);
+            console.log(error); // 处理错误情况
+        });
+    });
+    checkbox_row.addEventListener("change",(even)=>{
+        // console.log("开关按下");
+        // console.log(switch_row.checked);
+        if(checkbox_row.checked){
+            urlInput.setAttribute('rows', '5'); //允许五行解析
+        }else{
+            urlInput.removeAttribute('rows');
+        }
+    });
+
     function add_url() {
-        var urlInput = document.querySelector("mdui-text-field");
         var submitbutton = document.querySelector("mdui-button");
         var url = urlInput.value;
         submitbutton.loading = true;
@@ -28,19 +72,16 @@
                 console.log("newUrl: " + newUrl);
                 console.log("msg: " + msg);
                 if (code == 1) {
-                    snackbar.innerHTML = msg;
                     urlprint.value = newUrl;
-                    snackbar.open = true;
-                    urlprint.style.display = "block"
+                    urlprint.style.display = "block";
+                    snackbar_tip(msg);
                 } else {
-                    snackbar.innerHTML = msg;
-                    urlprint.style.display = "none"
-                    snackbar.open = true;
+                    urlprint.style.display = "none";
+                    snackbar_tip(msg);
                 }
             } else {
                 if (xhr.readyState >= 4 && xhr.status != 200) {
-                    snackbar.innerHTML = "请求失败";
-                    snackbar.open = true
+                    snackbar_tip(请求失败);
                 }
             }
         };
