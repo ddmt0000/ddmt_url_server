@@ -33,18 +33,25 @@
                 snackbar_tip("无法完整复制");
             }
         }
-    } 
+    }
 
     content_copy.addEventListener("click",()=>{
         cut_writetext(urlprint.PromiseResult);
     });
     content_paste.addEventListener("click",()=>{
+        var getcut = false; //如果用户犹豫会附上贴心小提示，或许会有更好的办法
         cut.readText().then(function(result) {
             urlInput.value = result;
+            getcut = true;
         }).catch(function(error) {
-            snackbar_tip(error);
-            console.log(error); // 处理错误情况
+            if(error.name === "NotAllowedError"){snackbar_tip("最后，还是被你拒绝了吗？😿");}else{snackbar_tip(error.message);}
+            getcut = true;
         });
+        setTimeout(()=>{
+            if(getcut === false){
+                snackbar_tip("你无需担心，大可以直接允许，因为该权限仅用于快捷粘贴。");
+            }
+        },"500");
     });
     checkbox_row.addEventListener("change",(even)=>{
         // console.log("开关按下");
