@@ -8,20 +8,13 @@
         
 <p></p>
 <mdui-button full-width onclick="add_url();"><mdui-icon name='add_link'></mdui-icon>add</mdui-button>
-<mdui-snackbar class="example-snackbar">Photo archived</mdui-snackbar>
 <script>
-    const snackbar = document.querySelector(".example-snackbar");
     const urlprint = document.querySelector("mdui-text-field[id='newurl']");
     const checkbox_row = document.getElementById("checkbox_row");
     const urlInput = document.querySelector("mdui-text-field");
     const content_paste = document.getElementById("content_paste");
     const content_copy = document.getElementById("content_copy");
     const cut = navigator.clipboard;
-
-    function snackbar_tip(text) {
-        snackbar.innerText = text;
-        snackbar.open = true;
-    } 
 
     function cut_writetext(text) {
         if (cut == null) {
@@ -33,7 +26,7 @@
                 snackbar_tip("无法完整复制");
             }
         }
-    }
+    } 
 
     content_copy.addEventListener("click",()=>{
         cut_writetext(urlprint.PromiseResult);
@@ -67,7 +60,8 @@
         var submitbutton = document.querySelector("mdui-button");
         var url = urlInput.value;
         submitbutton.loading = true;
-        console.log(submitbutton.loading);        var xhr = new XMLHttpRequest();
+        console.log(submitbutton.loading);        
+        var xhr = new XMLHttpRequest();
         xhr.open("GET", "/?mod=add&url_orange=" + encodeURIComponent(url), true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
@@ -75,7 +69,8 @@
                 var response = JSON.parse(xhr.responseText);
                 var code = response.code;
                 var newUrl = response.newurl;
-                var msg = response.msg;                console.log("code: " + code);
+                var msg = response.msg;                
+                console.log("code: " + code);
                 console.log("newUrl: " + newUrl);
                 console.log("msg: " + msg);
                 if (code == 1) {

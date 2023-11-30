@@ -29,11 +29,9 @@
                 slot="icon"></mdui-icon>删除</mdui-button>
         <mdui-button slot="action" id="dialog_list_cancel" variant="tonal">我没想干什么🖐️</mdui-button>
     </mdui-dialog>
-    <mdui-snackbar class="example-snackbar">Photo archived</mdui-snackbar>
 </div>
 <script>
     const cut = navigator.clipboard;
-    const snackbar = document.querySelector(".example-snackbar");
     const dialog_list = document.getElementById("dialog_list");
     const url_list = document.getElementById("url_list");
     const url_num = document.getElementById("url_num");
@@ -49,10 +47,6 @@
             }
             snackbar.open = true;
         }
-    } 
-    function snackbar_tip(text) {
-        snackbar.innerText = text;
-        snackbar.open = true;
     } 
     url_list.addEventListener("click", (event) => {
         console.log(event.target.localName);

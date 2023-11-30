@@ -1,0 +1,44 @@
+<h1>User create</h1>
+<h3>注册</h3>
+<mdui-text-field id="username" label="User"></mdui-text-field>
+<p></p>
+<mdui-text-field id="password" type="password" toggle-password label="password"></mdui-text-field>
+<p></p>
+<mdui-button full-width id="create">Create</mdui-button>
+<script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script>
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const create = document.getElementById("create");
+
+    create.addEventListener('click', () => {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://127.0.0.1:8012/?user_create', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var rejson = JSON.parse(xhr.responseText);
+                console.log(xhr.responseText);
+                if (rejson.code===1){
+                    //成功了
+                    snackbar_tip(rejson.msg);
+                }else{
+                    //错误
+                    snackbar_tip(rejson.msg);
+                }
+            }
+        };
+        var params = 'username=' + encodeURIComponent(username.value) + '&password=' + CryptoJS.MD5(password.value).toString();
+        
+        console.log(params);//危险！！！仅调试可用，上线务必移除
+
+        // 发送请求
+        xhr.send(params);
+    });
+
+
+    console.log(username);
+    console.log(password);
+    console.log(create);
+</script>

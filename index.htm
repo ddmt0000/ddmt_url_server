@@ -29,13 +29,24 @@
       <!-- <mdui-icon name='brightness_medium'></mdui-icon> -->
       <mdui-dropdown>
         <mdui-button slot="trigger">
+          <mdui-icon name="people" style="padding: 0px 30px 0px 0px;"></mdui-icon>
+          <?php echo $user_name;?>
+          <!-- <mdui-button-icon slot="icon" icon="admin_panel_settings"></mdui-button-icon> -->
           <mdui-icon name="more_vert"></mdui-icon>
         </mdui-button>
-        <mdui-menu>
+        <mdui-menu rounded>
+          <?php if(isset($_SESSION['username'])): ?>
           <mdui-menu-item><mdui-button-icon slot="icon"
-              icon="brightness_1"></mdui-button-icon>夜间模式</mdui-menu-item>
-          <mdui-menu-item><mdui-button-icon slot="icon"
-            icon="brightness_medium"></mdui-button-icon>跟随系统</mdui-menu-item>
+              icon="people"></mdui-button-icon>个人中心</mdui-menu-item>
+          <mdui-menu-item id="user_logout"><mdui-button-icon slot="icon"
+            icon="logout"></mdui-button-icon>退出登录</mdui-menu-item>
+          <?php endif; ?>
+          <?php if(!isset($_SESSION['username'])): ?>
+          <mdui-menu-item href="/?login.htm"><mdui-button-icon slot="icon"
+            icon="people"></mdui-button-icon>Sign in</mdui-menu-item>
+          <mdui-menu-item id="user_logout" href="/?create.htm"><mdui-button-icon slot="icon"
+            icon="person_add"></mdui-button-icon>Sign up</mdui-menu-item>
+          <?php endif; ?>
         </mdui-menu>
       </mdui-dropdown>
     </mdui-top-app-bar> <mdui-navigation-drawer close-on-overlay-click class="example-drawer" style="max-width: 200px;">
@@ -46,10 +57,13 @@
             icon="add"></mdui-button-icon>add</mdui-list-item>
         <mdui-list-item rounded href="/?about.htm" <?php echo page_active('about.htm');?>><mdui-button-icon slot="icon"
             icon="info"></mdui-button-icon>about</mdui-list-item>
-        <mdui-list-item rounded href="/?admin.htm" <?php echo page_active('admin.htm');?>><mdui-button-icon slot="icon"
-            icon="admin_panel_settings"></mdui-button-icon>admin</mdui-list-item>
+        <mdui-list-item rounded href="/?login.htm" <?php echo page_active('login.htm');?>><mdui-button-icon slot="icon"
+            icon="people"></mdui-button-icon>Sign in</mdui-list-item>
+        <mdui-list-item rounded href="/?create.htm" <?php echo page_active('create.htm');?>><mdui-button-icon slot="icon"
+            icon="person_add"></mdui-button-icon>Sign up</mdui-list-item>
       </mdui-list>
     </mdui-navigation-drawer>
+    <mdui-snackbar class="example-snackbar">Photo archived</mdui-snackbar>
     <mdui-bottom-app-bar scroll-target=".example-scroll-target">Powered by ddmturlsrever 1.0.1 on
       ddmt.top</mdui-bottom-app-bar>
     <mdui-layout-main class="example-layout-main" style="min-height: 95vh; padding: 64px 0px 0px;">
@@ -59,8 +73,16 @@
     </mdui-layout-main>
   </mdui-layout>
   <script>
+    const user_logout = document.getElementById("user_logout");
     const navigationDrawer = document.querySelector(".example-drawer");
     const openButton = document.querySelector("mdui-button-icon[icon='menu']");
+    const snackbar = document.querySelector(".example-snackbar");
+    console.log(user_logout);
+    function snackbar_tip(text) {//提示组件，子页会继承该函数
+        snackbar.innerText = text;
+        snackbar.open = true;
+    } 
+
     openButton.addEventListener("click", function () {
       console.log(navigationDrawer.open);
       if (navigationDrawer.open) {
@@ -68,6 +90,9 @@
       } else {
         navigationDrawer.open = true;
       }
+    });
+    user_logout.addEventListener("click",()=>{
+      window.location.replace("/?user_loginout");
     });
   </script>
 </body>

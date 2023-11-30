@@ -116,8 +116,79 @@ function generateRandomString($length){
     return $randomString;
 }
 
-//检查doce
+//检查dode
 function find_RandomString($randomString){
     $pattern = '/^[a-zA-Z0-9]{6}$/';
     return preg_match($pattern, $randomString);
+}
+
+//添加登录记录
+function user_login_add($name,$ip){
+    global $conn;
+    $submission_date = date("Y-m-d H:i:s"); // 当前日期时间
+    $sql = "UPDATE url_user SET login_date = $submission_date WHERE user_name = $name";
+    // 执行插入语句
+    if ($conn->query($sql) === TRUE) {
+        $sql = "UPDATE url_user SET user_ip = $ip WHERE user_name = $name";//登录ip
+        if ($conn->query($sql) === TRUE) {
+            return true;
+        } else {
+            return $sql . ";" . $conn->error;
+        }
+    } else {
+        return $sql . ";" . $conn->error;
+    }
+}
+
+//用户登录部分
+function user_login($name,$password,$ip){
+    global $conn;
+    $sql = "SELECT user_password FROM url_user WHERE user_name = '$name'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            if($row["user_role"]==-1){
+                return -2;//被禁止用户
+            }
+            if($row["user_password"] == $password){
+                user_login_add($name,$ip);//添加登陆记录
+                return 1;//登录成功
+            }else{
+                return -1;//账号密码错误
+            }
+        }
+    } else {
+        return -3;
+    }
+}
+
+//获取userid
+function user_get_id($name){
+    global $conn;
+    $sql = "SELECT user_id FROM url_user WHERE user_name = '$name'";
+    $result = $conn->query($sql);
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            return $row["user_id"];
+        }
+    } else {
+        return $sql . ";" . $conn->error;
+    }
+}
+
+//添加用户
+function user_add($user_name, $user_password, $user_ip, $user_role){
+    global $conn;
+    if(!empty(user_get_id($user_name))){
+        return null;
+    }
+    $submission_date = date("Y-m-d H:i:s"); // 当前日期时间
+    $sql = "INSERT INTO url_user (user_name, user_password, user_ip, user_role, login_date)
+        VALUES ('$user_name', '$user_password', '$user_ip', '$user_role', '$submission_date')";
+    // 执行插入语句
+    if ($conn->query($sql) === TRUE) {
+        return true;
+    } else {
+        return $sql . ";" . $conn->error;
+    }
 }

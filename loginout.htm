@@ -1,0 +1,22 @@
+<?php
+session_start();
+unset($_SESSION['username']);
+?>
+<h1>DDMT url server 默认页面</h1>
+<p><a id="s">3</a>秒后将带领你回到最开始的地方🤝🖥️</p>
+<script>
+    const a = document.getElementById("s");
+    var i = 3;
+    function timeout() {
+        if (i <= 0) {
+            window.location.replace("/");
+        } else {
+            a.innerText = i;
+            setTimeout(() => {
+                timeout();
+            }, "1000");
+        }
+        i--;
+    }
+    timeout();
+</script>
