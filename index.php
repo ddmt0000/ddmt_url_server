@@ -51,27 +51,60 @@ function home_list(){
 }
 if ($get_mod == "add") {
     header('Content-Type:application/json; charset=utf-8');
-    if (!isset($_GET['url_orange']) || empty($_GET['url_orange']) || filter_var($_GET['url_orange'], FILTER_VALIDATE_URL)) {
-        $randomcode = generateRandomString(6);
-        //排除出现相同的code
-        while (url_examine_orange($randomcode) != null) {
-            $randomcode = generateRandomString(6);
+    $url_orange_ = $_GET['url_orange'];
+    if (!isset($url_orange_) || !empty($url_orange_)){//不能为空
+        $url_parts  = explode("\n",$url_orange_); //处理多行
+        foreach ($url_parts as $urls){//遍历每个url
+            if (filter_var($urls, FILTER_VALIDATE_URL)){//判断url类型
+                if(count($rejson)>=5){//允许批量多少次，的后端限制
+                    break;
+                }
+
+                $randomcode = generateRandomString(6);
+                //排除出现相同的code
+                while (url_examine_orange($randomcode) != null) {
+                    $randomcode = generateRandomString(6);
+                }
+
+                if ($urls == "") {//再次判断是因为单行可能为空
+                    $rejson_ = array('code' => 0, 'orangeurl' => $urls, 'msg' => "不能为空");
+                    $rejson[]=$rejson_;
+                    continue;
+                }
+
+                $or_url = url_examine_orange($urls);
+                if ($or_url == null) {
+                    url_add($user_ip, $randomcode, $urls);
+                    $rejson_ = array('code' => 1, 'orangeurl' => $urls, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $randomcode, 'msg' => "成功");
+                    $rejson[]=$rejson_;
+                    continue;
+                } else {
+                    $rejson_ = array('code' => 1, 'orangeurl' => $urls, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $or_url, 'msg' => "已经存在你可以继续使用");
+                    $rejson[]=$rejson_;
+                    continue;
+                }
+            }else{
+                $rejson_ = array('code' => 0, 'orangeurl' => $urls, 'msg' => "错误的格式");
+                $rejson[]=$rejson_;
+                continue;
+            }
         }
-        if ($_GET['url_orange'] == "") {
-            $rejson = array('code' => 0, 'msg' => "不能为空");
-            exit(json_encode($rejson));
-        }
-        $or_url = url_examine_orange($_GET['url_orange']);
-        if ($or_url == null) {
-            url_add($user_ip, $randomcode, $_GET['url_orange']);
-            $rejson = array('code' => 1, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $randomcode, 'msg' => "成功");
-            exit(json_encode($rejson));
-        } else {
-            $rejson = array('code' => 1, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $or_url, 'msg' => "已经存在你可以继续使用");
-            exit(json_encode($rejson));
-        }
+        exit(json_encode($rejson));
+        // if ($url_orange_ == "") {
+        //     $rejson = array('code' => 0, 'msg' => "不能为空");
+        //     exit(json_encode($rejson));
+        // }
+        // $or_url = url_examine_orange($url_orange_);
+        // if ($or_url == null) {
+        //     url_add($user_ip, $randomcode, $url_orange_);
+        //     $rejson = array('code' => 1, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $randomcode, 'msg' => "成功");
+        //     exit(json_encode($rejson));
+        // } else {
+        //     $rejson = array('code' => 1, 'newurl' => "http://" . $_SERVER['HTTP_HOST'] . "/?" . $or_url, 'msg' => "已经存在你可以继续使用");
+        //     exit(json_encode($rejson));
+        // }
     } else {
-        $rejson = array('code' => 0, 'msg' => "错误的格式");
+        $rejson = array(array('code' => 0, 'orangeurl' => $url_orange_, 'msg' => "错误的参数"));
         exit(json_encode($rejson));
     }
 } elseif (find_RandomString($action) == 1) { //查询模式
